@@ -32,6 +32,24 @@ export const regDRepCertExample = (certBuilder: CSL.CertificatesBuilder, dRepKey
     return certBuilder;
 }
 
+// Add an example Vote Delegation Certificate to the builder
+export const voteDelegationExample = (certBuilder: CSL.CertificatesBuilder, dRep: CSL.DRep, stakeKeyHash: CSL.Ed25519KeyHash) => {
+    
+    const stakeCred = CSL.StakeCredential.from_keyhash(stakeKeyHash);
+
+    const voteDelegationCert = CSL.VoteDelegation.new(
+        stakeCred,
+        dRep,
+    );
+
+    // adding certificate
+    certBuilder.add(CSL.Certificate.new_vote_delegation(voteDelegationCert));
+
+    // console.log("Create Example Vote Delegation Certificate: ");
+    // console.log(voteDelegationCert.to_json());
+    
+    return certBuilder;
+}
 
 export const certificateExample = (txBuilder: CSL.TransactionBuilder) => {
     const certBuilder = CSL.CertificatesBuilder.new();
