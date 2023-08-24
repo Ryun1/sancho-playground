@@ -5,13 +5,31 @@ export const harden = (num) => {
     return 0x80000000 + num;
 };
 
-export const regDRepCertExample = () => {
-    const certBuilder = CSL.CertificatesBuilder.new();
+// Add an example DRep Registration Certificate to the builder
+export const regDRepCertExample = (certBuilder: CSL.CertificatesBuilder, dRepKeyHash: CSL.Ed25519KeyHash) => {
+    // Will change from a StakeCredential in future iterations of the lib
+    const dRepCred = CSL.StakeCredential.from_keyhash(dRepKeyHash);
 
-    const drepCred = CSL.StakeCredential.from_keyhash(
-        CSL.Ed25519KeyHash.from_bytes(randomBytes(28))
+    // Make an example metadata anchor, using my github example
+    const dataHash = CSL.AnchorDataHash.from_hex("9bba8233cdd086f0325daba465d568a88970d42536f9e71e92a80d5922ded885");
+ // const url = CSL.URL.new("https://raw.githubusercontent.com/Ryun1/gov-metadata/main/governace-action/metadata.jsonld");
+    const url = CSL.URL.new("example.com");
+    const anchor = CSL.Anchor.new(url, dataHash);
+
+    // Create cert object using one Ada as the deposit
+    const dRepRegCert = CSL.DrepRegistration.new(
+        dRepCred,
+        CSL.BigNum.from_str("1000000"),
+        anchor
     );
 
+    // adding certificate without required script witness
+    certBuilder.add(CSL.Certificate.new_drep_registration(dRepRegCert));
+
+    // console.log("Create Example DRep Registration Certificate: ");
+    // console.log(dRepRegCert.to_json());
+    
+    return certBuilder;
 }
 
 
