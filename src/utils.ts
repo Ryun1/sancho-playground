@@ -32,6 +32,26 @@ export const regDRepCertExample = (certBuilder: CSL.CertificatesBuilder, dRepKey
     return certBuilder;
 }
 
+// Add an example DRep retirement Certificate to the builder
+export const retireDRepCertExample = (certBuilder: CSL.CertificatesBuilder, dRepKeyHash: CSL.Ed25519KeyHash) => {
+    // Will change from a StakeCredential in future iterations of the lib
+    const dRepCred = CSL.StakeCredential.from_keyhash(dRepKeyHash);
+
+    // Create cert object using one Ada as the deposit
+    const dRepRetireCert = CSL.DrepDeregistration.new(
+        dRepCred,
+        CSL.BigNum.from_str("1000000"),
+    );
+
+    // adding certificate without required script witness
+    certBuilder.add(CSL.Certificate.new_drep_deregistration(dRepRetireCert));
+
+    // console.log("Create Example DRep Registration Certificate: ");
+    // console.log(dRepRegCert.to_json());
+    
+    return certBuilder;
+}
+
 // Add an example Vote Delegation Certificate to the builder
 export const voteDelegationExample = (certBuilder: CSL.CertificatesBuilder, dRep: CSL.DRep, stakeKeyHash: CSL.Ed25519KeyHash) => {
     

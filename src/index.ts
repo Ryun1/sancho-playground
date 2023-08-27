@@ -37,11 +37,10 @@ try {
     // Create a Vote Delegation Certificate and delegate to ourselves
     voteDelegationExample(certBuilder, CSL.DRep.new_key_hash(dRepKeyHash), stakeKeyHash);
 
-    // Create a new Transaction builder
+    // Create a Package into a Tx
     const txBuilder = create_rich_builder();
     txBuilder.set_certs_builder(certBuilder);
     txBuilder.add_change_if_needed(CSL.Address.from_bech32("addr_test1qz2fxv2umyhttkxyxp8x0dlpdt3k6cwng5pxj3jhsydzer3jcu5d8ps7zex2k2xt3uqxgjqnnj83ws8lhrn648jjxtwq2ytjqp"));
-
     const tx = txBuilder.build_tx();
     console.log(tx.to_hex());
     console.log(tx.to_json());
