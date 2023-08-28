@@ -71,6 +71,26 @@ export const voteDelegationExample = (certBuilder: CSL.CertificatesBuilder, dRep
     return certBuilder;
 }
 
+export const voteExample = (dRep: CSL.Ed25519KeyHash, govAction: CSL.Transaction ) => {
+    const votingBuilder = CSL.VotingBuilder.new();
+    const voter = CSL.Voter.new_drep(
+        CSL.StakeCredential.from_keyhash(dRep)
+    )
+
+    const govActionId = CSL.GovernanceActionId.new(
+        CSL.TransactionHash.from_bytes(randomBytes(32)),
+        0
+    );
+
+    //you can also use new_with_anchor if you need to specify it
+    const votingProcedure = CSL.VotingProcedure.new(CSL.VoteKind.Yes);
+
+    //use add_with_plutus_witness or add_with_native_script if you have required script witness
+    votingBuilder.add(voter, govActionId, votingProcedure);
+
+    txBuilder.set_voting_builder(votingBuilder);
+}
+
 export const certificateExample = (txBuilder: CSL.TransactionBuilder) => {
     const certBuilder = CSL.CertificatesBuilder.new();
 
