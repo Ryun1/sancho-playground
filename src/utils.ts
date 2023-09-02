@@ -8,7 +8,7 @@ export const harden = (num) => {
 // Add an example DRep Registration Certificate to the builder
 export const regDRepCertExample = (certBuilder: CSL.CertificatesBuilder, dRepKeyHash: CSL.Ed25519KeyHash) => {
     // Will change from a StakeCredential in future iterations of the lib
-    const dRepCred = CSL.StakeCredential.from_keyhash(dRepKeyHash);
+    const dRepCred = CSL.Credential.from_keyhash(dRepKeyHash);
 
     // Make an example metadata anchor, using my github example
     const dataHash = CSL.AnchorDataHash.from_hex("9bba8233cdd086f0325daba465d568a88970d42536f9e71e92a80d5922ded885");
@@ -17,7 +17,7 @@ export const regDRepCertExample = (certBuilder: CSL.CertificatesBuilder, dRepKey
     const anchor = CSL.Anchor.new(url, dataHash);
 
     // Create cert object using one Ada as the deposit
-    const dRepRegCert = CSL.DrepRegistration.new(
+    const dRepRegCert = CSL.DrepRegistration.new_with_anchor(
         dRepCred,
         CSL.BigNum.from_str("1000000"),
         anchor
@@ -35,7 +35,7 @@ export const regDRepCertExample = (certBuilder: CSL.CertificatesBuilder, dRepKey
 // Add an example DRep retirement Certificate to the builder
 export const retireDRepCertExample = (certBuilder: CSL.CertificatesBuilder, dRepKeyHash: CSL.Ed25519KeyHash) => {
     // Will change from a StakeCredential in future iterations of the lib
-    const dRepCred = CSL.StakeCredential.from_keyhash(dRepKeyHash);
+    const dRepCred = CSL.Credential.from_keyhash(dRepKeyHash);
 
     // Create cert object using one Ada as the deposit
     const dRepRetireCert = CSL.DrepDeregistration.new(
@@ -55,7 +55,7 @@ export const retireDRepCertExample = (certBuilder: CSL.CertificatesBuilder, dRep
 // Add an example Vote Delegation Certificate to the builder
 export const voteDelegationExample = (certBuilder: CSL.CertificatesBuilder, dRep: CSL.DRep, stakeKeyHash: CSL.Ed25519KeyHash) => {
     
-    const stakeCred = CSL.StakeCredential.from_keyhash(stakeKeyHash);
+    const stakeCred = CSL.Credential.from_keyhash(stakeKeyHash);
 
     const voteDelegationCert = CSL.VoteDelegation.new(
         stakeCred,
@@ -71,10 +71,10 @@ export const voteDelegationExample = (certBuilder: CSL.CertificatesBuilder, dRep
     return certBuilder;
 }
 
-export const voteExample = (dRep: CSL.Ed25519KeyHash, govAction: CSL.Transaction ) => {
+export const voteExample = (txBuilder: CSL.TransactionBuilder, dRep: CSL.Ed25519KeyHash, govAction: CSL.Transaction ) => {
     const votingBuilder = CSL.VotingBuilder.new();
     const voter = CSL.Voter.new_drep(
-        CSL.StakeCredential.from_keyhash(dRep)
+        CSL.Credential.from_keyhash(dRep)
     )
 
     const govActionId = CSL.GovernanceActionId.new(
@@ -94,7 +94,7 @@ export const voteExample = (dRep: CSL.Ed25519KeyHash, govAction: CSL.Transaction
 export const certificateExample = (txBuilder: CSL.TransactionBuilder) => {
     const certBuilder = CSL.CertificatesBuilder.new();
 
-    const drepStakeCred = CSL.StakeCredential.from_keyhash(
+    const drepStakeCred = CSL.Credential.from_keyhash(
         CSL.Ed25519KeyHash.from_bytes(randomBytes(28))
     );
     const dataHash = CSL.AnchorDataHash.from_bytes(randomBytes(32));
@@ -102,13 +102,13 @@ export const certificateExample = (txBuilder: CSL.TransactionBuilder) => {
     const anchor = CSL.Anchor.new(url, dataHash);
 
     //cert for drep registration
-    const drepRegCert = CSL.DrepRegistration.new(
+    const drepRegCert = CSL.DrepRegistration.new_with_anchor(
         drepStakeCred,
         CSL.BigNum.from_str("1000000"),
         anchor
     );
 
-    const stakeCred = CSL.StakeCredential.from_keyhash(
+    const stakeCred = CSL.Credential.from_keyhash(
         CSL.Ed25519KeyHash.from_bytes(randomBytes(28))
     );
 
@@ -136,7 +136,7 @@ export const certificateExample = (txBuilder: CSL.TransactionBuilder) => {
 export const votingExample = (txBuilder: CSL.TransactionBuilder) => {
     const votingBuilder = CSL.VotingBuilder.new();
     const voter = CSL.Voter.new_drep(
-        CSL.StakeCredential.from_keyhash(CSL.Ed25519KeyHash.from_bytes(randomBytes(28)))
+        CSL.Credential.from_keyhash(CSL.Ed25519KeyHash.from_bytes(randomBytes(28)))
     )
 
     const govActionId = CSL.GovernanceActionId.new(
