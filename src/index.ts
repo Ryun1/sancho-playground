@@ -1,7 +1,8 @@
 import * as CSL from "@emurgo/cardano-serialization-lib-nodejs"
 import secrets from 'secrets';
 import {generateMnemonic, mnemonicToEntropy} from 'bip39';
-import {harden, regDRepCertExample, voteDelegationExample, create_rich_builder} from './utils';
+import {harden, regDRepCertExample, voteDelegationExample, create_rich_builder, votingProposalExample} from './utils';
+import {randomBytes} from 'crypto'
 
 const generateCredentialsFromMnemonic = (mnemonic: string) => {
     let entropy = mnemonicToEntropy(mnemonic);
@@ -22,28 +23,42 @@ const generateCredentialsFromMnemonic = (mnemonic: string) => {
 };
 
 try {
-    // Generate or import a mnemonic
-    const credentials =  generateCredentialsFromMnemonic(generateMnemonic());
-    //const credentials = generateCredentialsFromMnemonic('enrich mechanic liberty use office candy rug also chest risk stick spot');
-    const dRepKeyHash = credentials.dRepKeyPub.hash();
-    const stakeKeyHash = credentials.stakeKeyPub.hash();
 
-    // Create a new Certificate builder
-    const certBuilder = CSL.CertificatesBuilder.new();
+    // console.log(randomBytes(32));
+    // // // Generate or import a mnemonic
+    // const credentials =  generateCredentialsFromMnemonic(generateMnemonic());
+    // //const credentials = generateCredentialsFromMnemonic('enrich mechanic liberty use office candy rug also chest risk stick spot');
+    // const dRepKeyHash = credentials.dRepKeyPub.hash();
+    // const stakeKeyHash = credentials.stakeKeyPub.hash();
 
-    // Create a DRep Registration Certificate and add to the builder
-    regDRepCertExample(certBuilder, dRepKeyHash);
+    // // Create a new Certificate builder
+    // const certBuilder = CSL.CertificatesBuilder.new();
 
-    // Create a Vote Delegation Certificate and delegate to ourselves
-    voteDelegationExample(certBuilder, CSL.DRep.new_key_hash(dRepKeyHash), stakeKeyHash);
+    // // Create a DRep Registration Certificate and add to the builder
+    // regDRepCertExample(certBuilder, dRepKeyHash);
+
+    // // Create a Vote Delegation Certificate and delegate to ourselves
+    // voteDelegationExample(certBuilder, CSL.DRep.new_key_hash(dRepKeyHash), stakeKeyHash);
 
     // Create a Package into a Tx
     const txBuilder = create_rich_builder();
-    txBuilder.set_certs_builder(certBuilder);
+
+    votingProposalExample(txBuilder);
+
+    
+
+    //txBuilder.set_certs_builder(certBuilder);
     txBuilder.add_change_if_needed(CSL.Address.from_bech32("addr_test1qz2fxv2umyhttkxyxp8x0dlpdt3k6cwng5pxj3jhsydzer3jcu5d8ps7zex2k2xt3uqxgjqnnj83ws8lhrn648jjxtwq2ytjqp"));
     const tx = txBuilder.build_tx();
     console.log(tx.to_hex());
     console.log(tx.to_json());
+
+    // const randomCredential = CSL.Credential.from_keyhash(CSL.Ed25519KeyHash.from_bytes((randomBytes(28))));
+    // const randomKeyHash = CSL.Ed25519KeyHash.from_bytes((randomBytes(28)))
+    // const randomDRep = CSL.DRep.new_key_hash(CSL.Ed25519KeyHash.from_bytes((randomBytes(28))));
+    // const dRepRegCert = CSL.DrepRegistration.new(randomCredential, CSL.BigNum.from_str("1000000"));
+    // const dRepDeRegCert = CSL.DrepDeregistration.new(randomCredential, CSL.BigNum.from_str("1000000"));
+
 
 } catch (e) {
     console.log(e);

@@ -12,7 +12,7 @@ export const regDRepCertExample = (certBuilder: CSL.CertificatesBuilder, dRepKey
 
     // Make an example metadata anchor, using my github example
     const dataHash = CSL.AnchorDataHash.from_hex("9bba8233cdd086f0325daba465d568a88970d42536f9e71e92a80d5922ded885");
- // const url = CSL.URL.new("https://raw.githubusercontent.com/Ryun1/gov-metadata/main/governace-action/metadata.jsonld");
+    //const url = CSL.URL.new("https://raw.githubusercontent.com/Ryun1/gov-metadata/main/governace-action/metadata.jsonld");
     const url = CSL.URL.new("example.com");
     const anchor = CSL.Anchor.new(url, dataHash);
 
@@ -102,7 +102,7 @@ export const certificateExample = (txBuilder: CSL.TransactionBuilder) => {
     const anchor = CSL.Anchor.new(url, dataHash);
 
     //cert for drep registration
-    const drepRegCert = CSL.DrepRegistration.new_with_anchor(
+    const dRepRegCert = CSL.DrepRegistration.new_with_anchor(
         drepStakeCred,
         CSL.BigNum.from_str("1000000"),
         anchor
@@ -125,7 +125,7 @@ export const certificateExample = (txBuilder: CSL.TransactionBuilder) => {
         );
 
     //adding certificates without required script witness
-    certBuilder.add(CSL.Certificate.new_drep_registration(drepRegCert));
+    certBuilder.add(CSL.Certificate.new_drep_registration(dRepRegCert));
     certBuilder.add(CSL.Certificate.new_stake_vote_registration_and_delegation(stakeVoteRegistrationAndDelegationCert));
 
     //use certBuilder.add_with_plutus_witness or add_with_native_script if you have required script witness
@@ -172,6 +172,22 @@ export const votingProposalExample = (txBuilder: CSL.TransactionBuilder) => {
     votingProposalBuilder.add(CSL.VotingProposal.new_new_constitution_proposal(
         newConstitution
     ));
+
+    txBuilder.set_voting_proposal_builder(votingProposalBuilder);
+}
+
+export const votingProposalInfoExample = (txBuilder: CSL.TransactionBuilder) => {
+    const votingProposalBuilder = CSL.VotingProposalBuilder.new();
+
+    const dataHash = CSL.AnchorDataHash.from_bytes(randomBytes(32));
+    const url = CSL.URL.new("https://example.com");
+    const anchor = CSL.Anchor.new(url, dataHash);
+
+    //or you can use new_with_action_id if you need to specify it
+    const newInfo = CSL.InfoProposal.new();
+
+    //you can use add_with_plutus_witness if you need to provide script witness
+    votingProposalBuilder.add(CSL.VotingProposal.new_info_proposal(newInfo));
 
     txBuilder.set_voting_proposal_builder(votingProposalBuilder);
 }
